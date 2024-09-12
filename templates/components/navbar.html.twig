@@ -1,22 +1,22 @@
-<nav class="flex justify-between items-center bg-neutral-100 p-2">
+<nav class="flex justify-between items-center bg-slate-50 p-2">
 	<a href="{{ path('app_home') }}">
 		<img src="{{ asset('/img/logo_dark.svg') }}" alt="logo" class="rounded-full hover:scale-95 transition-transform duration-200 ease-in-out">
 	</a>
 	<div class="flex justify-between items-center gap-4">
-		<form action="" method="post" class="md:flex items-center border-2 border-neutral-400 rounded-md p-2 hidden">
+		<form action="" method="post" class="md:flex items-center bg-slate-100 rounded-md p-1 hidden">
 			<input type="hidden" name="csrf_token" value="{{ csrf_token('authenticate') }}">
 			<input type="text" name="" id="" placeholder="Search notes..." class="bg-transparent outline-none">
-			<button type="submit">{{ ux_icon('mdi:search', { 'class': 'h-6 w-6 text-neutral-600 hover:text-violet-600' }) }}</button>
+			<button type="submit">{{ ux_icon('mdi:search', { 'class': 'h-6 w-6 text-slate-600 hover:text-violet-600' }) }}</button>
 		</form>
         <div class="flex justify-between items-center gap-4">
-            <a href="#" class="border-2 border-neutral-400 p-2 rounded-md hover:bg-neutral-200 md:hidden">
-				{{ ux_icon('mdi:search', { 'class': 'h-6 w-6 text-neutral-600 hover:text-violet-600' }) }}
+            <a href="#" class="p-2 rounded-md bg-slate-200 md:hidden">
+				{{ ux_icon('mdi:search', { 'class': 'h-6 w-6 text-slate-600 hover:text-violet-600' }) }}
 			</a>
-            <a href="{{ path('app_note_new')}}" class="border-2 border-neutral-400 p-2 rounded-md hover:bg-neutral-200">
-				{{ ux_icon('mdi:plus-box-outline', { 'class': 'h-6 w-6 text-neutral-600 hover:text-violet-600' }) }}
+            <a href="{{ path('app_note_new')}}" class="p-2 rounded-md bg-slate-200">
+				{{ ux_icon('mdi:plus-box-outline', { 'class': 'h-6 w-6 text-slate-600 hover:text-violet-600' }) }}
 			</a>
-            <a href="{{ path('app_profile_edit')}}" class="border-2 border-neutral-400 p-2 rounded-md hover:bg-neutral-200">
-				{{ ux_icon('mdi:cog-outline', { 'class': 'h-6 w-6 text-neutral-600 hover:text-violet-600' }) }}
+            <a href="{{ path('app_profile_edit')}}" class="p-2 rounded-md bg-slate-200">
+				{{ ux_icon('mdi:cog-outline', { 'class': 'h-6 w-6 text-slate-600 hover:text-violet-600' }) }}
 			</a>
             <a href="{{ path('app_note_user', { 'username': app.user.username ?? 'martin' })}}" class="shadow-md rounded-full hover:scale-95 transition-transform duration-200 ease-in-out">
 				<img src="https://avatar.iran.liara.run/public/50" alt="logo" width="48" class="rounded-full">
