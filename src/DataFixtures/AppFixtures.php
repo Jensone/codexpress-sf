@@ -3,13 +3,15 @@
 namespace App\DataFixtures;
 
 use Faker\Factory;
-use App\Entity\User;
-use App\Entity\Category;
+use App\Entity\Like;
 use App\Entity\Note;
+use App\Entity\User;
+use App\Entity\Network;
+use App\Entity\Category;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
@@ -58,7 +60,20 @@ class AppFixtures extends Fixture
             $manager->persist($category);
         }
 
-        // 10 utilisateurs
+        // 1 admin
+        $admin = new User();
+        $admin
+            ->setEmail('hello@codexpress.fr')
+            ->setUsername('Jensone')
+            ->setPassword($this->hash->hashPassword($admin, 'admin'))
+            ->setRoles(['ROLE_ADMIN'])
+            ;
+        $manager->persist($admin);
+
+        // 10 utilisateurs + 10 notes chacun + 3 network
+        $users = [];
+        $notes = [];
+        $networks = ['facebook', 'twitter', 'instagram', 'linkedin', 'youtube', 'github', 'reddit', 'discord', 'telegram'];
         for ($i = 0; $i < 10; $i++) {
             $username = $faker->userName; // Génére un username aléatoire
             $usernameFinal = $this->slug->slug($username); // Username en slug
@@ -69,20 +84,48 @@ class AppFixtures extends Fixture
                 ->setPassword($this->hash->hashPassword($user, 'admin'))
                 ->setRoles(['ROLE_USER'])
                 ;
+            array_push($users, $user);
             $manager->persist($user);
+
+            // Ajoute 3 réseaux
+            for ($k=0; $k < 3; $k++) {
+                $networkSelected = $faker->randomElement($networks);
+                $network = new Network();
+                $network
+                    ->setCreator($user)
+                    ->setName($networkSelected)
+                    ->setUrl('https://' . strtolower($networkSelected) . '.com/' . $user->getUsername())
+                    ;
+                $manager->persist($network);
+            }
 
             for ($j=0; $j < 10; $j++) { 
                 $note = new Note();
                 $note
-                    ->setTitle($faker->sentence())
+                    ->setTitle($faker->words(5, true))
                     ->setSlug($this->slug->slug($note->getTitle()))
-                    ->setContent($faker->paragraphs(4, true))
+                    ->setContent($faker->randomHtml)
                     ->setPublic($faker->boolean(50))
                     ->setViews($faker->numberBetween(100, 10000))
                     ->setCreator($user)
                     ->setCategory($faker->randomElement($categoryArray))
                     ;
+                array_push($notes, $note);
                 $manager->persist($note);
+            }
+        }
+
+        // 50 likes aléatoires
+        for ($i = 0; $i < 50; $i++) {
+            $noteSelected = $faker->randomElement($notes);
+            $user = $faker->randomElement($users);
+            if ($user->getId() != $noteSelected->getCreator()->getId()) {
+                $like = new Like();
+                $like
+                    ->setNote($noteSelected)
+                    ->setCreator($user)
+                    ;
+                $manager->persist($like);
             }
         }
 
