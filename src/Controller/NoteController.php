@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Note;
 use App\Repository\NoteRepository;
 use App\Repository\UserRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -13,20 +14,37 @@ use Symfony\Component\Routing\Attribute\Route;
 class NoteController extends AbstractController
 {
     #[Route('/', name: 'app_note_all', methods: ['GET'])]
-    public function all(NoteRepository $nr): Response
+    public function all(NoteRepository $nr, PaginatorInterface $paginator, Request $request): Response
     {
+        // Notes publiques
+        $query = $nr->findBy(['is_public' => true], ['created_at' => 'DESC']);
+        $notes = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10
+        );
         return $this->render('note/all.html.twig', [
-            'allNotes' => $nr->findBy(['is_public' => true], ['created_at' => 'DESC']),
+            'notes' => $notes
         ]);
     }
 
     #[Route('/{slug}', name: 'app_note_show', methods: ['GET'])]
     public function show(string $slug, NoteRepository $nr): Response
     {
-        // TODO: Mettre en place le filtre pour les notes privées
-        return $this->render('note/show.html.twig', [
-            'note' => $nr->findOneBySlug($slug),
-        ]);
+        $note = $nr->findOneBySlug($slug);
+        if ($note === null) {
+            throw $this->createNotFoundException('Note not found');
+        } else {
+            if ($note->isPublic()) {
+                $creatorNotes = $nr->findByCreator($note->getCreator());
+                return $this->render('note/show.html.twig', [
+                    'note' => $note,
+                    'creatorNotes' => $creatorNotes,
+                ]);
+            } else {
+                throw $this->createAccessDeniedException('This note is private');
+            }
+        }
     }
 
     #[Route('/{username}', name: 'app_note_user', methods: ['GET'])]
@@ -59,7 +77,7 @@ class NoteController extends AbstractController
             // TODO: Formulaire à envoyer à la vue Twig
         ]);
     }
-    
+
     #[Route('/delete/{slug}', name: 'app_note_delete', methods: ['POST'])]
     public function delete(string $slug, NoteRepository $nr): Response
     {
