@@ -17,7 +17,7 @@ class SearchController extends AbstractController
         $searchQuery = $request->query->get('q');
         
         if ($searchQuery === null) {
-            return $this->render('search/index.html.twig');
+            return $this->render('search/results.html.twig');
         }
 
         $query = $paginator->paginate(
@@ -26,7 +26,7 @@ class SearchController extends AbstractController
             20
         );
 
-        return $this->render('search/index.html.twig', [
+        return $this->render('search/results.html.twig', [
             'searchQuery' => $searchQuery,
             'notes' => $query,
         ]);
