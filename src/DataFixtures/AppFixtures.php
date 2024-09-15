@@ -41,7 +41,7 @@ class AppFixtures extends Fixture
             'Python' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-plain.svg',
             'Ruby' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-plain.svg',
             'C++' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-plain.svg',
-            'Go' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-wordmark.svg',
+            'Go' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original-wordmark.svg',
             'bash' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bash/bash-plain.svg',
             'Markdown' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/markdown/markdown-original.svg',
             'Java' => 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original-wordmark.svg',
@@ -115,18 +115,34 @@ class AppFixtures extends Fixture
             }
         }
 
-        // 50 likes aléatoires
-        for ($i = 0; $i < 50; $i++) {
-            $noteSelected = $faker->randomElement($notes);
-            $user = $faker->randomElement($users);
-            if ($user->getId() != $noteSelected->getCreator()->getId()) {
-                $like = new Like();
-                $like
-                    ->setNote($noteSelected)
-                    ->setCreator($user)
-                    ;
-                $manager->persist($like);
+        $manager->flush();
+
+        // 100 nouveaux utilisateurs sans notes
+        for ($i = 0; $i < 100; $i++) {
+            $username = $faker->userName; // Génére un username aléatoire
+            $usernameFinal = $this->slug->slug($username); // Username en slug
+            $user =  new User();
+            $user
+                ->setEmail($usernameFinal . '@' . $faker->freeEmailDomain)
+                ->setUsername($username)
+                ->setPassword($this->hash->hashPassword($user, 'admin'))
+                ->setRoles(['ROLE_USER'])
+                ;
+            
+            // 10 likes aléatoires
+            for ($j=0; $j < 10; $j++) {
+                $noteSelected = $faker->randomElement($notes);
+                $user = $faker->randomElement($users);
+                if ($user->getId() != $noteSelected->getCreator()->getId()) {
+                    $like = new Like();
+                    $like
+                        ->setNote($noteSelected)
+                        ->setCreator($user)
+                        ;
+                    $manager->persist($like);
+                }
             }
+            $manager->persist($user);
         }
 
         $manager->flush();
