@@ -29,9 +29,6 @@ class Note
     #[ORM\Column]
     private ?bool $is_public = null;
 
-    #[ORM\Column(type: Types::BIGINT)]
-    private ?string $views = null;
-
     #[ORM\Column]
     private ?\DateTimeImmutable $created_at = null;
 
@@ -58,12 +55,19 @@ class Note
     #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'note', orphanRemoval: true)]
     private Collection $likes;
 
+    /**
+     * @var Collection<int, View>
+     */
+    #[ORM\OneToMany(targetEntity: View::class, mappedBy: 'note', orphanRemoval: true)]
+    private Collection $views;
+
     public function __construct()
     {
         $this->notifications = new ArrayCollection(); // initialisation du tableau de notifications
         $this->is_public = false; // initialisation du booléen à false
         $this->title = uniqid('note-'); // initialisation du titre au GUID
         $this->likes = new ArrayCollection();
+        $this->views = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -128,18 +132,6 @@ class Note
     public function setPublic(bool $is_public): static
     {
         $this->is_public = $is_public;
-
-        return $this;
-    }
-
-    public function getViews(): ?string
-    {
-        return $this->views;
-    }
-
-    public function setViews(string $views): static
-    {
-        $this->views = $views;
 
         return $this;
     }
@@ -246,6 +238,36 @@ class Note
             // set the owning side to null (unless already changed)
             if ($like->getNote() === $this) {
                 $like->setNote(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, View>
+     */
+    public function getViews(): Collection
+    {
+        return $this->views;
+    }
+
+    public function addViews(View $views): static
+    {
+        if (!$this->views->contains($views)) {
+            $this->views->add($views);
+            $views->setNote($this);
+        }
+
+        return $this;
+    }
+
+    public function removeViews(View $views): static
+    {
+        if ($this->views->removeElement($views)) {
+            // set the owning side to null (unless already changed)
+            if ($views->getNote() === $this) {
+                $views->setNote(null);
             }
         }
 
