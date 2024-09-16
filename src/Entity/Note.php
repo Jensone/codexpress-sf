@@ -61,10 +61,14 @@ class Note
     #[ORM\OneToMany(targetEntity: View::class, mappedBy: 'note', orphanRemoval: true)]
     private Collection $views;
 
+    #[ORM\Column]
+    private ?bool $is_premium = null;
+
     public function __construct()
     {
         $this->notifications = new ArrayCollection(); // initialisation du tableau de notifications
         $this->is_public = false; // initialisation du booléen à false
+        $this->is_premium = false; // initialisation du booléen à false
         $this->title = uniqid('note-'); // initialisation du titre au GUID
         $this->likes = new ArrayCollection();
         $this->views = new ArrayCollection();
@@ -270,6 +274,18 @@ class Note
                 $views->setNote(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isPremium(): ?bool
+    {
+        return $this->is_premium;
+    }
+
+    public function setPremium(bool $is_premium): static
+    {
+        $this->is_premium = $is_premium;
 
         return $this;
     }
