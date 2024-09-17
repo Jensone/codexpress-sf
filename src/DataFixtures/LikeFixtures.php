@@ -4,37 +4,40 @@ namespace App\DataFixtures;
 
 use Faker\Factory;
 use App\Entity\Like;
-use App\Repository\NoteRepository;
-use App\Repository\UserRepository;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class LikeFixtures extends Fixture implements DependentFixtureInterface
 {
-    private $users = null;
-    private $notes = null;
-
-    public function __construct(
-        private readonly UserRepository $ur,
-        private readonly NoteRepository $nr
-    ) {
-        $this->users = $ur->findAll();
-        $this->notes = $nr->findBy(['is_public' => true]);
-    }
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
 
-        foreach ($this->users as $user) {
-            for ($i = 0; $i < 5; $i++) {
-                $like = new Like();
-                $like
-                    ->setNote($faker->randomElement($this->notes))
-                    ->setCreator($user)
-                ;
-                $manager->persist($like);
-            }
+        $regularUserCount = 5;
+        $premiumUserCount = 3;
+        $adminCount = 1;
+        $totalUserCount = $regularUserCount + $premiumUserCount + $adminCount;
+
+        $noteCount = 45; // 30 regular notes + 15 premium notes
+
+        $userReferences = [];
+        
+        // Collect all user references
+        for ($i = 0; $i < $regularUserCount; $i++) {
+            $userReferences[] = 'user_' . $i;
+        }
+        for ($i = 0; $i < $premiumUserCount; $i++) {
+            $userReferences[] = 'premium_user_' . $i;
+        }
+        $userReferences[] = 'user_admin';
+
+        for ($i = 0; $i < 100; $i++) {
+            $like = new Like();
+            $like
+                ->setNote($this->getReference('note_' . $faker->numberBetween(0, $noteCount - 1)))
+                ->setCreator($this->getReference($faker->randomElement($userReferences)));
+            $manager->persist($like);
         }
 
         $manager->flush();
@@ -42,6 +45,6 @@ class LikeFixtures extends Fixture implements DependentFixtureInterface
 
     public function getDependencies()
     {
-        return [NoteFixtures::class, UserFixtures::class];
+        return [NoteFixtures::class, UserFixtures::class, NotePremiumFixtures::class];
     }
 }
