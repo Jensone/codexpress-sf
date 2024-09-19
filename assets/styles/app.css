@@ -59,3 +59,11 @@ h5 {
     opacity: 1;
     visibility: visible;
 }
+
+.premium-bg {
+    background-image: url('/img/grid-bg.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    mix-blend-mode:overlay;
+}
