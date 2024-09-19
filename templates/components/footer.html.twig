@@ -1,4 +1,20 @@
-<footer class="">
-	<p class="">CodeXpress by XXX</p>
-	<p class="">{{ 'now'|date('Y') }}</p>
+<footer class="bg-violet-950 text-slate-50 py-8">
+    <div class="max-w-screen-lg mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-4 md:mb-0 text-center md:text-left">
+            <p class="text-lg font-semibold">CodeXpress</p>
+            <p class="text-sm">&copy; {{ 'now'|date('Y') }} - made by Jensone</p>
+        </div>
+        <div class="flex flex-col items-center md:items-end">
+            <div class="flex mt-2 space-x-4">
+                <a href="#" class="text-violet-50 hover:text-violet-200">
+                    {{ ux_icon('mdi:github', { 'class': 'h-6 w-6' }) }}
+                </a>
+                <a href="#" class="text-violet-50 hover:text-violet-200">
+                    {{ ux_icon('mdi:twitter', { 'class': 'h-6 w-6' }) }}
+                </a>
+                    {{ ux_icon('mdi:linkedin', { 'class': 'h-6 w-6' }) }}
+                </a>
+            </div>
+        </div>
+    </div>
 </footer>

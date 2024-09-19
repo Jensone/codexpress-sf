@@ -22,11 +22,16 @@
     {{ include('components/note_header.html.twig') }}
     <section class="max-w-screen-lg mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-4">
         <article class="col-span-1 md:col-span-2 bg-[#f5f2f0] rounded-md p-4 md:p-6 mb-4 flex flex-col border relative">
-            <button class="bg-neutral-300 rounded-md py-2 px-3 text-sm hover:bg-neutral-500 hover:text-white self-end w-fit transition-all duration-200 ease-in-out absolute bottom-2 right-2">
-                copy
-            </button>
-            <code class="language-html">{{ note.content|escape }}</code>
+            {% if app.user.roles is not defined or app.user.roles|length == 0 or 'ROLE_PREMIUM' not in app.user.roles %}
+                {{ include('components/premium-notice.html.twig') }}
+            {% else %}
+                <button class="bg-neutral-300 rounded-md py-2 px-3 text-sm hover:bg-neutral-500 hover:text-white self-end w-fit transition-all duration-200 ease-in-out absolute bottom-2 right-2">
+                    copy
+                </button>
+                <code class="language-html">{{ note.content|escape }}</code>
+            {% endif %}
         </article>
+        
         <aside class="flex flex-col gap-4 md:col-span-1">
             <div class="rounded-md p-4 mb-4 flex flex-col gap-4 border">
                 <a href="{{ path('app_note_user', { 'username': note.creator.username }) }}" class="flex items-center gap-2">
@@ -46,7 +51,7 @@
                         <input type="hidden" name="note_id" value="{{ note.id }}">
                         <input type="hidden" name="creator_id" value="{{ app.user.id ?? 1 }}">
                         <button type="submit" class="flex items-center gap-1 bg-violet-100 rounded-md py-2 px-3 hover:bg-violet-200 self-end w-fit transition-all duration-200 ease-in-out">
-                            {% set likes = note.views %} {# TODO: Mettre le nb de Like après update des entités #}
+                            {% set likes = note.likes|length %}
                             {{ ux_icon('mdi:heart-outline', { 'class': 'h-5 w-5 text-violet-950 mr-1 inline-block' }) }}
                             {{ likes|format_number }}
                         </button>

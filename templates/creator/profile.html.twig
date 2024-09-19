@@ -28,7 +28,7 @@
             {% for item in app.user.notes %}
                 <div class="shadow-lg relative rounded-md p-4 md:p-6 mb-4 flex flex-col border">
                     {% if item.isPublic == false %}
-                        <div class="absolute bottom-0 left-0 bg-yellow-100 rounded-bl-md rounded-tr-md py-1 px-2 text-sm flex gap-2">
+                        <div class="absolute bottom-0 left-0 bg-yellow-100 rounded-bl-md rounded-tr-md py-1 px-2 text-sm flex items-center gap-2">
                             {{ ux_icon('mdi:lock-open-outline', { 'class': 'h-4 w-4' }) }} Private
                         </div>
                     {% endif %}
