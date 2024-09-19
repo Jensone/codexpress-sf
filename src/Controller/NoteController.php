@@ -15,25 +15,30 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-#[Route('/notes')] // Suffixe pour les routes du controller
+#[Route('/notes')]
 class NoteController extends AbstractController
 {
     #[Route('/', name: 'app_note_all', methods: ['GET'])]
     public function all(NoteRepository $nr, Request $request, PaginatorInterface $paginator): Response
     {
         $pagination = $paginator->paginate(
-            $nr->findBy(['is_public' => true], ['created_at' => 'DESC']), // Le tableau de données
-            $request->query->getInt('page', 1), // Page en cours
-            10 // Nb d'éléments par page
+            $nr->findBy(['is_public' => true], ['created_at' => 'DESC']),
+            $request->query->getInt('page', 1),
+            10
         );
-    
+
         return $this->render('note/all.html.twig', ['allNotes' => $pagination,]);
     }
 
     #[Route('/n/{slug}', name: 'app_note_show', methods: ['GET'])]
     public function show(string $slug, NoteRepository $nr): Response
     {
-        $note = $nr->findOneBySlug($slug); // Objet Note
+        $note = $nr->findOneBySlug($slug);
+
+        if (!$note) {
+            throw $this->createNotFoundException('Note not found');
+        }
+
         return $this->render('note/show.html.twig', [
             'note' => $note,
             'creatorNotes' => $nr->findByCreator($note->getCreator()->getId()),
@@ -41,14 +46,17 @@ class NoteController extends AbstractController
     }
 
     #[Route('/u/{username}', name: 'app_note_user', methods: ['GET'])]
-    public function userNotes(
-        string $username,
-        UserRepository $user, // Cette fois on utilise le repository User
-    ): Response {
-        $creator = $user->findOneByUsername($username); // Recherche de l'utilisateur
+    public function userNotes(string $username, UserRepository $user,): Response
+    {
+        $creator = $user->findOneByUsername($username);
+
+        if (!$creator) {
+            throw $this->createNotFoundException('User not found');
+        }
+
         return $this->render('note/user.html.twig', [
-            'creator' => $creator, // Envoie les données de l'utilisateur à la vue Twig
-            'userNotes' => $creator->getNotes(), // Récupère les notes de l'utilisateur
+            'creator' => $creator,
+            'userNotes' => $creator->getNotes(),
         ]);
     }
 
@@ -87,13 +95,9 @@ class NoteController extends AbstractController
 
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     #[Route('/edit/{slug}', name: 'app_note_edit', methods: ['GET', 'POST'])]
-    public function edit(
-        string $slug,
-        NoteRepository $nr,
-        Request $request,
-        EntityManagerInterface $em
-    ): Response {
-        $note = $nr->findOneBySlug($slug); // Recherche de la note à modifier
+    public function edit(string $slug, NoteRepository $nr, Request $request, EntityManagerInterface $em): Response 
+    {
+        $note = $nr->findOneBySlug($slug);
 
         if ($note->getCreator() !== $this->getUser()) {
             $this->addFlash('error', 'You are not authorized to edit this note');
@@ -114,10 +118,13 @@ class NoteController extends AbstractController
     }
 
     #[Route('/delete/{slug}', name: 'app_note_delete', methods: ['POST'])]
-    public function delete(string $slug, NoteRepository $nr): Response
+    public function delete(string $slug, NoteRepository $nr, EntityManagerInterface $em): Response
     {
-        $note = $nr->findOneBySlug($slug); // Recherche de la note à supprimer
-        // TODO: Traitement de la suppression
+        $note = $nr->findOneBySlug($slug);
+
+        $em->remove($note);
+        $em->flush();
+
         $this->addFlash('success', 'Your code snippet has been deleted.');
         return $this->redirectToRoute('app_note_user');
     }
