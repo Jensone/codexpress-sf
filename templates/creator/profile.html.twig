@@ -8,12 +8,21 @@
             <h1 class="text-4xl md:text-5xl mb-4 font-bold">Your profile</h1>
             <div 
                 class="inline-block w-36 h-36 shadow-md rounded-full bg-cover bg-center"
-                style="background-image: url('{{ '/images/uploads/' ~ app.user.image ?? 'default/user.png' }}')"
+                style="background-image: url('{{ '/images/uploads/' ~ app.user.image ?? 'default.png' }}')"
             >
             </div>
+            <ul class="flex gap-4 my-5 justify-center">
+                {% for item in app.user.networks %}
+                    <li>
+                        <a href="{{ item.url }}" target="_blank" class="rounded-md py-2 px-3 w-fit transition-all duration-200 ease-in-out">
+                            {{ ux_icon('mdi:' ~ item.name, { 'class': 'h-8 w-8 text-violet-950 inline-block' }) }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
     </header>
-    <section class="max-w-screen-lg mx-auto px-4 gap-4">
+    <section class="max-w-screen-lg mx-auto px-4 mb-20 gap-4">
         {% if app.user.notes is empty %}
         <div class="text-center">
             <p class="text-violet-950 mb-5">

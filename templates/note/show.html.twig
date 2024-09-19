@@ -44,7 +44,7 @@
                 <a href="{{ path('app_note_user', { 'username': note.creator.username }) }}" class="flex items-center gap-2">
                     <div 
                         class="inline-block w-10 h-10 shadow-md rounded-full bg-cover bg-center"
-                        style="background-image: url('{{ '/images/uploads/' ~ note.creator.image ?? 'default/user.png' }}')"
+                        style="background-image: url('{{ '/images/uploads/' ~ note.creator.image ?? 'default.png' }}')"
                     >
                     </div>
                     <div class="flex flex-col gap-1">

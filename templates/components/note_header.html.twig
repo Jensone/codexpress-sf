@@ -15,7 +15,7 @@
         <div class="flex gap-2 items-center text-sm">
             <div 
                 class="inline-block w-7 h-7 rounded-full bg-cover bg-center mr-2"
-                style="background-image: url('{{ '/images/uploads/' ~ note.creator.image ?? 'default/user.png' }}')"
+                style="background-image: url('{{ '/images/uploads/' ~ note.creator.image ?? 'default.png' }}')"
             ></div>
             <p class="text-slate-600">published {{ note.createdAt|time_diff }} ago by {{ note.creator.username }}</p>
         </div>

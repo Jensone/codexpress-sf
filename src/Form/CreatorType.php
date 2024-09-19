@@ -9,15 +9,18 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class CreatorType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email', EmailType::class)
+            ->add('email', EmailType::class, [
+                'label' => 'Email address',
+                'attr' => ['class' => 'border-2 border-violet-950 rounded-md p-2 w-full focus:border-violet-600'],
+            ])
             ->add('image', DropzoneType::class, [
+                'label' => 'Profile picture',
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [
@@ -28,7 +31,6 @@ class CreatorType extends AbstractType
                     ])
                 ],
             ])
-            ->add('submit', SubmitType::class)
         ;
     }
 

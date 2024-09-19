@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Network;
 use App\Form\CreatorType;
-use App\Repository\NoteRepository;
 use App\Service\UploaderService;
+use App\Repository\NoteRepository;
+use App\Repository\NetworkRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,6 +49,41 @@ class CreatorController extends AbstractController
         
         return $this->render('creator/edit.html.twig', [
             'creatorForm' => $form,
+            'networks' => ['github', 'twitter', 'linkedin', 'facebook', 'reddit', 'instagram', 'youtube'],
         ]);
+    }
+
+    #[Route('/network', name: 'app_network', methods: ['POST'])]
+    public function network(Request $request, EntityManagerInterface $em): Response
+    {
+        $networkName = $request->request->get('network_name');
+        $networkUrl = $request->request->get('network_url') ?? false;
+        
+        if (!$networkName || !$networkUrl) {
+            $this->addFlash('error', 'Please select a network and enter a url');
+            return $this->redirectToRoute('app_profile_edit');
+        }
+
+        $network = new Network();
+        $network
+            ->setName($networkName)
+            ->setUrl($networkUrl)
+            ->setCreator($this->getUser());
+        $em->persist($network);
+        $em->flush();
+
+        $this->addFlash('success', 'Your network has been added');
+        return $this->redirectToRoute('app_profile');
+    }
+
+    #[Route('/network/delete', name: 'app_network_delete', methods: ['POST'])]
+    public function deleteNetwork(Request $request, NetworkRepository $ntr, EntityManagerInterface $em): Response
+    {
+        $network = $ntr->find($request->request->get('network_id'));
+        $em->remove($network);
+        $em->flush();
+
+        $this->addFlash('success', 'Your network has been deleted');
+        return $this->redirectToRoute('app_profile');
     }
 }
