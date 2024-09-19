@@ -6,7 +6,6 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -14,7 +13,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ORM\HasLifecycleCallbacks]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -52,14 +50,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
 
-    #[ORM\Column]
-    private bool $isVerified = false;
+    /**
+     * @var Collection<int, Like>
+     */
+    #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'creator', orphanRemoval: true)]
+    private Collection $likes;
 
     /**
-    * @var Collection<int, Network>
-    */
+     * @var Collection<int, Network>
+     */
     #[ORM\OneToMany(targetEntity: Network::class, mappedBy: 'creator', orphanRemoval: true)]
     private Collection $networks;
+
+    /**
+     * @var Collection<int, Subscription>
+     */
+    #[ORM\OneToMany(targetEntity: Subscription::class, mappedBy: 'creator')]
+    private Collection $subscriptions;
 
     #[ORM\Column(length: 255)]
     private ?string $image = null;
@@ -67,6 +74,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->notes = new ArrayCollection();
+        $this->likes = new ArrayCollection();
+        $this->networks = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
         $this->image = 'default.png';
     }
 
@@ -225,14 +235,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isVerified(): bool
+    /**
+     * @return Collection<int, Like>
+     */
+    public function getLikes(): Collection
     {
-        return $this->isVerified;
+        return $this->likes;
     }
 
-    public function setVerified(bool $isVerified): static
+    public function addLike(Like $like): static
     {
-        $this->isVerified = $isVerified;
+        if (!$this->likes->contains($like)) {
+            $this->likes->add($like);
+            $like->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLike(Like $like): static
+    {
+        if ($this->likes->removeElement($like)) {
+            // set the owning side to null (unless already changed)
+            if ($like->getCreator() === $this) {
+                $like->setCreator(null);
+            }
+        }
 
         return $this;
     }
@@ -261,6 +289,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($network->getCreator() === $this) {
                 $network->setCreator(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Subscription>
+     */
+    public function getSubscriptions(): Collection
+    {
+        return $this->subscriptions;
+    }
+
+    public function addSubscription(Subscription $subscription): static
+    {
+        if (!$this->subscriptions->contains($subscription)) {
+            $this->subscriptions->add($subscription);
+            $subscription->setCreator($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubscription(Subscription $subscription): static
+    {
+        if ($this->subscriptions->removeElement($subscription)) {
+            // set the owning side to null (unless already changed)
+            if ($subscription->getCreator() === $this) {
+                $subscription->setCreator(null);
             }
         }
 
