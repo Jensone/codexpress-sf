@@ -23,7 +23,7 @@ class UserFixtures extends Fixture
         $admin = new User();
         $admin
             ->setEmail('hello@codexpress.fr')
-            ->setUsername('admin')
+            ->setUsername('Jensone')
             ->setPassword($this->hasher->hashPassword($admin, 'admin'))
             ->setRoles(['ROLE_ADMIN']);
         $manager->persist($admin);
