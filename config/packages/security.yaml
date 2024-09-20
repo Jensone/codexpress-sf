@@ -9,6 +9,12 @@ security:
             entity:
                 class: App\Entity\User
                 property: email
+
+    role_hierarchy:
+        # ROLE_SUPERADMIN: ['ROLE_ADMIN'] # Ce rôle est plus fort que ADMIN
+        ROLE_ADMIN: ['ROLE_PREMIUM'] # Ce rôle est plus fort que PREMIUM
+        ROLE_PREMIUM: ['ROLE_USER'] # Ce rôle est plus fort que USER
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
