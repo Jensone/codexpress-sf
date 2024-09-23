@@ -23,11 +23,4 @@ class HomeController extends AbstractController
             'totalNotes' => count($nr->findAll()) // Renvoi le compte total de notes
         ]);
     }
-
-    #[Route('/email', name: 'app_email')]
-    public function testEmail(EmailNotificationService $ems): Response
-    {
-        $ems->sendEmail($this->getUser()->getEmail());
-        return new Response('Email sent to ' . $this->getUser()->getEmail());
-    }
 }
