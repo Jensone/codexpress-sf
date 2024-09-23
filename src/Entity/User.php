@@ -70,6 +70,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 255)]
     private ?string $image = null;
+    
+    #[ORM\Column]
+    private ?bool $isVerified = null;
 
     public function __construct()
     {
@@ -78,6 +81,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->networks = new ArrayCollection();
         $this->subscriptions = new ArrayCollection();
         $this->image = 'default.png';
+        $this->isVerified = false;
     }
 
     #[ORM\PrePersist]
@@ -333,6 +337,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setImage(string $image): static
     {
         $this->image = $image;
+
+        return $this;
+    }
+
+    public function isVerified(): ?bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setVerified(bool $isVerified): static
+    {
+        $this->isVerified = $isVerified;
 
         return $this;
     }
