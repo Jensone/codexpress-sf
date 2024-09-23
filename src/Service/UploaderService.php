@@ -2,23 +2,15 @@
 
 namespace App\Service;
 
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class UploaderService
+class UploaderService extends AbstractService
 {
-    private $param;
-
-    public function __construct(ParameterBagInterface $parameterBag)
-    {
-        $this->param = $parameterBag;
-    }
-
     public function uploadImage(UploadedFile $file): string
     {
         try {
             $fileName = uniqid('image-') . '.' . $file->guessExtension();
-            $file->move($this->param->get('uploads_images_directory'), $fileName);
+            $file->move($this->parameter->get('uploads_images_directory'), $fileName);
 
             return $fileName;
         } catch (\Exception $e) {
@@ -32,7 +24,7 @@ class UploaderService
             return;
         }
         try {
-            $filePath = $this->param->get('uploads_images_directory') . '/' . $fileName;
+            $filePath = $this->parameter->get('uploads_images_directory') . '/' . $fileName;
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
