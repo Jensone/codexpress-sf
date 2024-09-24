@@ -1,20 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello SubscriptionController!{% endblock %}
+{% block title %}Subscribe to premium{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/mba-m2/Lab/codexpress/src/Controller/SubscriptionController.php</code></li>
-        <li>Your template at <code>/Users/mba-m2/Lab/codexpress/templates/subscription/index.html.twig</code></li>
-    </ul>
+<div class="max-w-screen-lg mx-auto px-10 text-center h-screen">
+    <a href="{{ path('app_subscription_checkout') }}" class="bg-green-700 rounded-md py-2 px-3 hover:bg-green-600 self-end w-fit transition-all duration-200 ease-in-out text-slate-50">
+        {{ ux_icon('mdi:money', { 'class': 'h-5 w-5 text-slate-50 inline-block' }) }}
+        Go Premium  
+    </a>
 </div>
 {% endblock %}

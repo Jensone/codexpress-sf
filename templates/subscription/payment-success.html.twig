@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Subscribe to premium{% endblock %}
+
+{% block body %}
+<div class="max-w-screen-lg mx-auto px-10 text-center h-screen">
+    <h3>{{ 'Your payment has been successful'|trans }}</h3>
+    <p class="text-slate-600">{{ 'You can now access the premium features of CodeXpress'|trans }}</p>
+    <a href="{{ path('app_subscription_checkout') }}" class="bg-violet-100 rounded-md py-2 px-3 hover:bg-violet-200 self-end w-fit transition-all duration-200 ease-in-out">
+        {{ 'Go to create premium notes'|trans }}
+    </a>
+</div>
+{% endblock %}
