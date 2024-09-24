@@ -7,22 +7,33 @@ use App\Entity\Subscription;
 use Stripe\Checkout\Session;
 use App\Service\AbstractService;
 use App\Repository\OfferRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class PaymentService 
 {
-    private $offer; // OFFRE PREMIUM
-    private $domain; // NOM DE DOMAINE
-    private $apiKey;
+    /**
+     * Propriétés du service
+     * - Offre sélectionnée
+     * - Nom de domaine
+     * - Clé API Stripe
+     * - Utilisateur courant
+     */
+    private $offer, $domain, $apiKey, $user;
 
     public function __construct(
-        private ParameterBagInterface $parameter,
-        OfferRepository $or)
+        private ParameterBagInterface $parameter, 
+        private OfferRepository $or, 
+        private readonly Security $security, 
+        private EntityManagerInterface $em
+    )
     {
         $this->parameter = $parameter;
-        $this->offer = $or->findOneByName('Premium'); // Récupération de l'offre Premium
+        $this->offer = $or->findOneByName('Premium');
         $this->apiKey =$this->parameter->get('STRIPE_API_SK');
-        $this->domain = 'https://127.0.0.1:8000'; // NOM DE DOMAINE
+        $this->domain = 'https://127.0.0.1:8000/en';
+        $this->user = $security->getUser();
     }
 
     /**
@@ -34,6 +45,7 @@ class PaymentService
     {
         Stripe::setApiKey($this->apiKey); // Établissement de la connexion (requête API)        
         $checkoutSession = Session::create([
+            'customer_email' => $this->user->getEmail(),
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'eur',
@@ -55,8 +67,28 @@ class PaymentService
         return $checkoutSession;
     }
 
-
     // Traitement du role des utilisateurs en fonction du paiement
+    public function addSubscription(): ?Subscription
+    {
+        $subscription = new Subscription();
+        $subscription
+            ->setCreator($this->user)
+            ->setOffer($this->offer)
+            ->setStartDate(new \DateTimeImmutable())
+            ->setEndDate(new \DateTimeImmutable('+30 days'))
+            ;
+            $this->em->persist($subscription);
+            $this->em->flush();
+            
+        $this->user->setRoles(['ROLE_PREMIUM']);
+        $this->em->persist($this->user);
+        $this->em->flush();
+
+        return $subscription;
+    }
     // Génération de la facture
+
     // Notifications email
+
+
 }
