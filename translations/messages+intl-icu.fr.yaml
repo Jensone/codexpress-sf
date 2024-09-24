@@ -1,16 +1,22 @@
-"Create an account": "Créer un compte"
-"Create your account": "Créez votre compte"
-"Sign up to start creating your own notes and discovering new ones": "Inscrivez-vous pour commencer à créer vos propres notes et en découvrir de nouvelles"
-"Create my account": "Créer mon compte"
-"Already have an account?": "Vous avez déjà un compte ?"
-"Sign in": "Se connecter"
-"You are logged in as": "Vous êtes connecté(e) en tant que"
-"Logout": "Déconnexion"
-"Welcome back": "Bienvenue"
-"Sign in to access your notes and continue coding": "Connectez-vous pour accéder à vos notes et continuer à coder"
-"Email address": "Adresse e-mail"
-"Type your password": "Saisissez votre mot de passe"
-"Remember me": "Se souvenir de moi"
-"Forgot your password?": "Mot de passe oublié ?"
+'Create an account': 'Créer un compte'
+'Create your account': 'Créez votre compte'
+'Sign up to start creating your own notes and discovering new ones': 'Inscrivez-vous pour commencer à créer vos propres notes et en découvrir de nouvelles'
+'Create my account': 'Créer mon compte'
+'Already have an account?': 'Vous avez déjà un compte ?'
+'Sign in': 'Se connecter'
+'You are logged in as': 'Vous êtes connecté(e) en tant que'
+Logout: Déconnexion
+'Welcome back': Bienvenue
+'Sign in to access your notes and continue coding': 'Connectez-vous pour accéder à vos notes et continuer à coder'
+'Email address': 'Adresse e-mail'
+'Type your password': 'Saisissez votre mot de passe'
+'Remember me': 'Se souvenir de moi'
+'Forgot your password?': 'Mot de passe oublié ?'
 "Don't have an account?": "Vous n'avez pas de compte ?"
-"Register now": "S'inscrire maintenant"
+'Register now': "S'inscrire maintenant"
+'Your payment has been declined': 'Votre paiement a été refusé'
+'You can still access the premium features of CodeXpress': 'Vous pouvez toujours accéder aux fonctionnalités premium de CodeXpress'
+'Try again': 'Réessayez'
+'Your payment has been successful': 'Votre paiement a été effectué avec succès'
+'You can now access the premium features of CodeXpress': 'Vous pouvez maintenant accéder aux fonctionnalités premium de CodeXpress'
+'Go to create premium notes': 'Aller créer des notes premium'
