@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\NoteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -20,6 +21,9 @@ class Note
     #[ORM\Column(length: 80)]
     private ?string $title = null;
 
+    #[Assert\NotBlank(
+        message: 'Please enter a title for your note'
+    )]
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
