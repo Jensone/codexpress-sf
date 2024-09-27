@@ -11,9 +11,9 @@ security:
                 property: email
 
     role_hierarchy:
-        # ROLE_SUPERADMIN: ['ROLE_ADMIN'] # Ce rôle est plus fort que ADMIN
+        ROLE_PREMIUM: 'ROLE_USER' # Ce rôle est plus fort que USER
         ROLE_ADMIN: ['ROLE_PREMIUM'] # Ce rôle est plus fort que PREMIUM
-        ROLE_PREMIUM: ['ROLE_USER'] # Ce rôle est plus fort que USER
+        # ROLE_SUPERADMIN: ['ROLE_ADMIN'] # Ce rôle est plus fort que ADMIN
 
     firewalls:
         dev:
@@ -40,8 +40,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/profile, roles: ROLE_ADMIN }
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/connexion, roles: PUBLIC_ACCESS }
+        # - { path: ^/, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
 
 when@test:
     security:
